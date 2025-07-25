@@ -45,6 +45,16 @@ const signUp = async (req, res) => {
   }
   const transaction = await db.sequelize.transaction();
   try {
+    // check account exist
+    const existAccount = await db.Account.findOne({
+        where: {email}
+    })
+    if(existAccount) {
+        return res.status(409).json({
+            status: 'ERR',
+            message: 'Email already exist'
+        })
+    }
     const { accessToken, refreshToken } = generateToken(email, res);
     const salt = await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash(password, salt);
