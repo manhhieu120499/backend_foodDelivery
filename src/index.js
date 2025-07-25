@@ -5,6 +5,7 @@ const PORT = process.env.PORT
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
 const db = require('../models')
+const AuthRoute = require('./routes/auth.route')
 
 // test connect
 db.connect()
@@ -19,6 +20,8 @@ app.use(cookieParser())
 app.get('/', (req, res) => {
     res.send('<h1>Hello World</h1>')
 })
+
+app.use('/api/auth', AuthRoute)
 
 app.listen(PORT, () => console.log(`Server is running on http://localhost:${PORT}`))
 
