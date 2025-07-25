@@ -17,6 +17,12 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Category.init({
+    categoryId: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      field: 'categoryId' // optional, tốt để rõ ràng
+    },
     name: DataTypes.STRING,
     image: DataTypes.STRING
   }, {

@@ -20,6 +20,12 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Customer.init({
+    cusId: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      field: 'cusId' // optional, tốt để rõ ràng
+    },
     name: DataTypes.STRING,
     age: DataTypes.STRING,
     phone: DataTypes.STRING,
@@ -28,7 +34,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Customer',
-    underscored: true
+    tableName: 'Customers'
   });
   return Customer;
 };

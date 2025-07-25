@@ -18,6 +18,12 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Order.init({
+    orderId: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      field: 'orderId' // optional, tốt để rõ ràng
+    },
     statusOrder: DataTypes.STRING,
     note: DataTypes.STRING,
     addressDelivery: DataTypes.STRING,

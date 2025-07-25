@@ -21,6 +21,12 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   OrderDetail.init({
+    orderDetailId: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      field: 'orderDetailId' // optional, tốt để rõ ràng
+    },
     orderId: DataTypes.INTEGER,
     foodId: DataTypes.INTEGER,
     quantity: DataTypes.INTEGER,

@@ -18,6 +18,12 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Food.init({
+    foodId: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      field: 'foodId' // optional, tốt để rõ ràng
+    },
     name: DataTypes.STRING,
     image: DataTypes.STRING,
     des: DataTypes.STRING,
