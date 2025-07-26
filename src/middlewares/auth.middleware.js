@@ -19,7 +19,10 @@ const generateToken = (email, res) => {
 
 const protectRoute = (req, res, next) => {
     const token = req.cookies.jwt
-    console.log(token)
+    if(!req.body.email) return res.status(400).json({
+            status: 'ERR',
+            message: 'Please provide email!'
+        })
     if(!token) {
         return res.status(400).json({
             status: 'ERR',
