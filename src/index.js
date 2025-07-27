@@ -8,6 +8,7 @@ const db = require('../models')
 const AuthRoute = require('./routes/auth.route')
 const CategoryRoute = require('./routes/category.route')
 const FoodRoute = require('./routes/food.route')
+const OrderRoute = require('./routes/order.route')
 
 // test connect
 db.connect()
@@ -27,6 +28,7 @@ app.get('/', (req, res) => {
 app.use('/api/auth', AuthRoute)
 app.use('/api/categories', CategoryRoute)
 app.use('/api/food', FoodRoute)
+app.use('/api/order', OrderRoute)
 
 app.listen(PORT, () => console.log(`Server is running on http://localhost:${PORT}`))
 
