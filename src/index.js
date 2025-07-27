@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser')
 const db = require('../models')
 const AuthRoute = require('./routes/auth.route')
 const CategoryRoute = require('./routes/category.route')
+const FoodRoute = require('./routes/food.route')
 
 // test connect
 db.connect()
@@ -25,6 +26,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/auth', AuthRoute)
 app.use('/api/categories', CategoryRoute)
+app.use('/api/food', FoodRoute)
 
 app.listen(PORT, () => console.log(`Server is running on http://localhost:${PORT}`))
 
