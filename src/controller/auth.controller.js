@@ -7,7 +7,7 @@ const { uploadImage } = require("../lib/cloudinary");
 const logger = require("pino")();
 
 const signUp = async (req, res) => {
-  const { email, password, username } = req.body;
+  const { email, password, username, role } = req.body;
   if (!email || !password || !username) {
     return res.status(400).json({
       status: "ERR",
@@ -43,6 +43,13 @@ const signUp = async (req, res) => {
       message: "Min Length username is 5",
     });
   }
+
+  if(!role || !['admin', 'customer'].includes(role)) {
+    return res.status(400).json({
+      status: 'ERR',
+      message: 'Role is require -> Only two role (admin|customer)'
+    })
+  }
   const transaction = await db.sequelize.transaction();
   try {
     // check account exist
@@ -67,17 +74,21 @@ const signUp = async (req, res) => {
         accessToken,
         refreshToken,
         cusId: Customer.cusId,
+        role
       },
       { transaction }
     );
     await transaction.commit();
-    return res.status(201).json({
-      status: "OK",
-      account: Account,
-    });
+    if(Account) {
+      const {password, ...responseAccount} = Account.toJSON();
+      return res.status(201).json({
+        status: "OK",
+        account: responseAccount,
+      });
+    }
   } catch (err) {
     logger.error(`Sign up failed: ${err}`);
-    transaction.rollback();
+    await transaction.rollback();
     return res.status(400).json({
       status: "ERR",
       messageError: err,
@@ -173,7 +184,7 @@ const updateProfileUser = async (req, res) => {
   const minAge = 18;
   const { id } = req.params;
   const { name, age, phone, image, dob } = req.body;
-  if (!name || !age || !phone || !image || !dob) {
+  if (!name || !age || !phone || !dob) {
     return res.status(400).json({
       status: "ERR",
       message: "Please fill in all field",
@@ -198,11 +209,12 @@ const updateProfileUser = async (req, res) => {
         "Phone is not valid -> Phone start (03|05|07|08|09) and after is 8 number character",
     });
   }
-  if (!validator.isURL(image)) {
+  
+  if(typeof image == "string" && !validator.isURL(image)) {
     return res.status(400).json({
-      status: "ERR",
-      message: "Image require type url",
-    });
+      status: 'ERR',
+      message: 'Image is type string base 64 or type FileImage'
+    })
   }
 
   if (!validator.isDate(dob.trim())) {
@@ -221,7 +233,19 @@ const updateProfileUser = async (req, res) => {
       });
     else {
       // upload image
-      const imageUrl = await uploadImage(image);
+      let imageUrl = "";
+      if(req.file || image) {
+        let urlImageUpload = ""
+        if(req.file) {
+          const base64 = req.file.buffer.toString('base64')
+        const formatUrlImage = `data:${req.file.mimetype};base64,${base64}`
+          urlImageUpload = await uploadImage(formatUrlImage)
+        } else {
+          urlImageUpload = await uploadImage(image)
+        }
+         imageUrl = urlImageUpload
+      }
+      
       if (imageUrl === null) {
         return res.status(500).json({
           status: "ERR",
@@ -235,7 +259,6 @@ const updateProfileUser = async (req, res) => {
             phone,
             image: imageUrl,
             dob,
-            updatedAt: Date.now()
           },
           {
             where: { cusId: id },
@@ -250,6 +273,7 @@ const updateProfileUser = async (req, res) => {
       }
     }
   } catch (err) {
+    logger.error(`Update customer profile is failed: ${err}`)
     await transaction.rollback()
     return res.status(500).json({
       status: "ERR",
