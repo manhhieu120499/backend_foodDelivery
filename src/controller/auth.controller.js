@@ -132,9 +132,13 @@ const login = async (req, res) => {
     }
     // generate token and set cookies
     generateToken(email, res);
+
+    const {password: currentPass, ...rest} = Account.toJSON()
+
     return res.status(200).json({
       status: "OK",
       message: "Login successfully",
+      data: rest
     });
   } catch (err) {
     logger.error(`Login failed ${err}`);
