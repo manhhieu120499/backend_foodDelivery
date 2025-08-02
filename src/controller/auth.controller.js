@@ -286,4 +286,33 @@ const updateProfileUser = async (req, res) => {
   }
 };
 
-module.exports = { login, signUp, logout, getUser, updateProfileUser };
+const refreshToken = async (req, res) => {
+  try{
+    const Account = await db.Account.findOne({where: {email: req.body.email}})
+    if(Account) {
+        const {accessToken, refreshToken} = generateToken(req.body.email, res)
+        return res.status(200).json({
+          status: 'OK',
+          message: 'Refresh token successfully',
+          token: {
+            accessToken, 
+            refreshToken
+          }
+        })
+    }else {
+      return res.status(404).json({
+        status: 'ERR',
+        message: 'Not refresh token because email not found'
+      })
+    }
+    
+  }catch(err) {
+      logger.error(err)
+      return res.status(500).json({
+        status: 'ERR',
+        message: 'Internal Server Error'
+      })
+  }
+}
+
+module.exports = { login, signUp, logout, getUser, updateProfileUser, refreshToken };

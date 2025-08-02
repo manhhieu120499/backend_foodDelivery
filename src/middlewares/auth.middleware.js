@@ -33,7 +33,7 @@ const protectRoute = (req, res, next) => {
         if(err) {
             return res.status(400).json({
                 status: 'ERR',
-                message: 'Unauthorized: ' + err,
+                message: 'Unauthorized: ' + err.message,
             })
         }
         if(decode.email !== req.body.email) {
