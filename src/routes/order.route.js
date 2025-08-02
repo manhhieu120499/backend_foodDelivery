@@ -6,7 +6,7 @@ const {protectRoute} = require('../middlewares/auth.middleware')
 
 router.get('/all', protectRoute, getAllOrder)
 router.get('/admin/:id', protectRoute, getOrder)
-router.get("/my-order", protectRoute, getOrderByCusId)
+router.post("/my-order", protectRoute, getOrderByCusId)
 router.post("/create", protectRoute, validate(OrderRequestInsert), createOrder)
 
 module.exports = router
